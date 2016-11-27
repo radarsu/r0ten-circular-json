@@ -42,8 +42,23 @@ export const CircularJSON = {
         let specialChar = CircularJSON._config.specialChar;
         let leaveRefIfUndefined = CircularJSON._config.leaveRefIfUndefined;
 
+        let seenObjects: any[] = [];
+
         let referRecursive = (currentData: any) => {
             _.forOwn(currentData, (value: any, key: string) => {
+                // check if object is in seenObjects
+                let found = _.find(seenObjects, (object: any) => {
+                    return object === value;
+                });
+
+                // ignore seen objects
+                if (found) {
+                    return;
+                }
+
+                // add to not seen objects
+                seenObjects.push(value);
+
                 if (typeof value === "object") {
                     return referRecursive(value);
                 }

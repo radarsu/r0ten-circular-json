@@ -21,8 +21,16 @@ exports.CircularJSON = {
     regenerate: (data, root = data) => {
         let specialChar = exports.CircularJSON._config.specialChar;
         let leaveRefIfUndefined = exports.CircularJSON._config.leaveRefIfUndefined;
+        let seenObjects = [];
         let referRecursive = (currentData) => {
             _.forOwn(currentData, (value, key) => {
+                let found = _.find(seenObjects, (object) => {
+                    return object === value;
+                });
+                if (found) {
+                    return;
+                }
+                seenObjects.push(value);
                 if (typeof value === "object") {
                     return referRecursive(value);
                 }
