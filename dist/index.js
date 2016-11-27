@@ -24,14 +24,14 @@ exports.CircularJSON = {
         let seenObjects = [];
         let referRecursive = (currentData) => {
             _.forOwn(currentData, (value, key) => {
-                let found = _.find(seenObjects, (object) => {
-                    return object === value;
-                });
-                if (found) {
-                    return;
-                }
-                seenObjects.push(value);
                 if (typeof value === "object") {
+                    let found = _.find(seenObjects, (object) => {
+                        return object === value;
+                    });
+                    if (found) {
+                        return;
+                    }
+                    seenObjects.push(value);
                     return referRecursive(value);
                 }
                 if (typeof value !== "string" || value.charAt(0) !== specialChar) {
