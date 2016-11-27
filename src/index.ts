@@ -5,7 +5,7 @@ export interface CircularJSONConfig {
 }
 
 export interface CircularJSONStringifyOptions {
-    value: string | {};
+    value: {};
     replacer?: (key: string, value: any) => any;
     space?: number;
 }
