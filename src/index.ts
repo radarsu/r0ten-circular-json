@@ -5,14 +5,14 @@ export interface CircularJSONConfig {
 }
 
 export interface CircularJSONStringifyOptions {
-    value?: any;
+    value?: {};
     replacer?: (key: string, value: any) => any;
     space?: number;
 }
 
 export interface CircularJSONParseOptions {
-    value?: any;
-    root?: any;
+    value?: string | {};
+    root?: {};
     leaveRefIfUndefined?: boolean;
 }
 
@@ -112,9 +112,11 @@ export const CircularJSON = {
             leaveRefIfUndefined: CircularJSON._config.leaveRefIfUndefined,
             specialChar: CircularJSON._config.specialChar,
         });
-		
-		if (typeof options.value === "string") {
-            options.value = JSON.parse(options.value);
+
+        if (typeof options.value !== "string") {
+            options.value = CircularJSON.stringify({
+                value: options.value,
+            });
         }
 
         return refer(options.value, options.root);

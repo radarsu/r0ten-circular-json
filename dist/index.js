@@ -71,11 +71,11 @@ exports.CircularJSON = {
             leaveRefIfUndefined: exports.CircularJSON._config.leaveRefIfUndefined,
             specialChar: exports.CircularJSON._config.specialChar,
         });
-		
-        if (typeof options.value === "string") {
-            options.value = JSON.parse(options.value);
+        if (typeof options.value !== "string") {
+            options.value = exports.CircularJSON.stringify({
+                value: options.value,
+            });
         }
-
         return refer(options.value, options.root);
     },
     stringify: (creatorOptions = {}) => {
