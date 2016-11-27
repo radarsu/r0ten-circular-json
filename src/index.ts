@@ -112,7 +112,12 @@ export const CircularJSON = {
             leaveRefIfUndefined: CircularJSON._config.leaveRefIfUndefined,
             specialChar: CircularJSON._config.specialChar,
         });
-        return refer(JSON.parse(options.value), options.root);
+		
+		if (typeof options.value === "string") {
+            options.value = JSON.parse(options.value);
+        }
+
+        return refer(options.value, options.root);
     },
     stringify: (creatorOptions: CircularJSONStringifyOptions = {}) => {
         let options = _.defaults(creatorOptions, {
