@@ -1,23 +1,28 @@
-export interface CircularJSONConfig {
+export interface CircularJSONConfigQuery {
     specialChar?: string;
+    leaveRefIfUndefined?: boolean;
 }
 export interface CircularJSONStringifyOptions {
-    value?: any;
+    value: {};
     replacer?: (key: string, value: any) => any;
     space?: number;
 }
 export interface CircularJSONParseOptions {
-    value?: any;
-    root?: any;
+    value: string;
+    root?: {};
     leaveRefIfUndefined?: boolean;
 }
 export declare const CircularJSON: {
     _config: {
         leaveRefIfUndefined: boolean;
-        space: number;
         specialChar: string;
     };
-    config: (options?: CircularJSONConfig) => void;
-    parse: (creatorOptions?: CircularJSONParseOptions) => any;
-    stringify: (creatorOptions?: CircularJSONStringifyOptions) => string;
+    _default: {
+        space: number;
+    };
+    config: (options?: CircularJSONConfigQuery) => void;
+    parse: (creatorOptions: CircularJSONParseOptions) => any;
+    regenerate: (data: {}, root?: {}) => any;
+    replace: (data: {}) => any;
+    stringify: (creatorOptions: CircularJSONStringifyOptions) => string;
 };
