@@ -80,12 +80,12 @@ let refer = (data: any, root: any = data) => {
                 return;
             }
 
-            if (leaveRefIfUndefined) {
-                currentData[key] = _.get(root, path) || value;
-                return;
-            }
-
             currentData[key] = _.get(root, path);
+
+            if (leaveRefIfUndefined && typeof currentData[key] === "undefined") {
+                // leave ref
+                currentData[key] = value;
+            }
         });
         return currentData;
     };
