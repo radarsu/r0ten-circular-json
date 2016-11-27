@@ -21,8 +21,10 @@ let replace = (data) => {
             else {
                 let thisPath = `${path.join(specialChar)}${specialChar}${key}`;
                 seenObjectsDict[thisPath] = value;
+                let pathBefore = _.clone(path);
                 path.push(key);
                 currentData[key] = replaceRecursive(value);
+                path = pathBefore;
             }
         });
         return currentData;

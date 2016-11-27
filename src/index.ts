@@ -46,8 +46,13 @@ let replace = (data: any) => {
 
                 // not found - add it
                 seenObjectsDict[thisPath] = value;
+
+                // save previous path
+                let pathBefore = _.clone(path);
                 path.push(key);
                 currentData[key] = replaceRecursive(value);
+                // revert path
+                path = pathBefore;
             }
         });
 

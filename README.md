@@ -1,4 +1,8 @@
 # r0ten-circular-json
+
+Currently available only via npm-github:
+`npm i radarsu/r0ten-circular-json -S`;
+
 In my tests it appeared around 3x faster than <https://github.com/WebReflection/circular-json> in both stringifying and parsing big JSON.
 
 Also, there is available root customisation, which is very useful for sending circular objects from server to client-side, so that client can rebuild his circular references based on provided data. An example below:
@@ -28,7 +32,7 @@ console.log(dict.items[1].room.name);
 // logs: tavern
 ```
 
-Another example.
+Another example:
 ```
 let game: any = {
     name: "shard",
