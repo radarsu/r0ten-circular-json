@@ -66,8 +66,8 @@ exports.CircularJSON = {
     config: (options = {}) => {
         this._config = options;
     },
-    parse: (creatorOptions = {}) => {
-        let options = _.defaults(creatorOptions, {
+    parse: (creatorOptions) => {
+        let options = _.defaults(creatorOptions || {}, {
             leaveRefIfUndefined: exports.CircularJSON._config.leaveRefIfUndefined,
             specialChar: exports.CircularJSON._config.specialChar,
         });
@@ -76,10 +76,10 @@ exports.CircularJSON = {
                 value: options.value,
             });
         }
-        return refer(options.value, options.root);
+        return refer(JSON.parse(options.value), options.root);
     },
-    stringify: (creatorOptions = {}) => {
-        let options = _.defaults(creatorOptions, {
+    stringify: (creatorOptions) => {
+        let options = _.defaults(creatorOptions || {}, {
             space: exports.CircularJSON._config.space,
             specialChar: exports.CircularJSON._config.specialChar,
         });
