@@ -21,6 +21,13 @@ export const CircularJSON = {
     _config: {
         leaveRefIfUndefined: true,
         specialChar: "~",
+        omitKeys: (key: string) => {
+            if (key.slice(0, 2) === "__") {
+                return true;
+            }
+
+            return false;
+        },
     },
     _default: {
         space: 0,
@@ -29,7 +36,7 @@ export const CircularJSON = {
         _.assign(CircularJSON._config, options);
     },
     parse: (creatorOptions: CircularJSONParseOptions) => {
-        let options = _.defaults(creatorOptions || {}, {
+        const options = _.defaults(creatorOptions || {}, {
             leaveRefIfUndefined: CircularJSON._config.leaveRefIfUndefined,
             specialChar: CircularJSON._config.specialChar,
         });
@@ -39,16 +46,21 @@ export const CircularJSON = {
     // restore circular references from object
     regenerate: (data: {}, root: {} = data) => {
 
-        let specialChar = CircularJSON._config.specialChar;
-        let leaveRefIfUndefined = CircularJSON._config.leaveRefIfUndefined;
+        const specialChar = CircularJSON._config.specialChar;
+        const leaveRefIfUndefined = CircularJSON._config.leaveRefIfUndefined;
+        const omitKeys = CircularJSON._config.omitKeys;
 
-        let seenObjects: any[] = [];
+        const seenObjects: any[] = [];
 
-        let referRecursive = (currentData: any) => {
+        const referRecursive = (currentData: any) => {
             _.forOwn(currentData, (value: any, key: string) => {
+                if (omitKeys(key)) {
+                    return;
+                }
+
                 if (typeof value === "object") {
                     // check if object is in seenObjects
-                    let found = _.find(seenObjects, (object: any) => {
+                    const found = _.find(seenObjects, (object: any) => {
                         return object === value;
                     });
 
@@ -67,7 +79,7 @@ export const CircularJSON = {
                     return;
                 }
 
-                let path = value.split(specialChar);
+                const path = value.split(specialChar);
                 path.shift();
                 if (path[0] === "") {
                     currentData[key] = root;
@@ -92,35 +104,35 @@ export const CircularJSON = {
 
         data = _.cloneDeep(data);
 
-        let specialChar = CircularJSON._config.specialChar;
+        const specialChar = CircularJSON._config.specialChar;
 
-        let seenObjectsDict = {
+        const seenObjectsDict = {
             [specialChar]: data,
         };
 
         let path: string[] = [""];
 
-        let replaceRecursive = (currentData: any) => {
+        const replaceRecursive = (currentData: any) => {
             _.forOwn(currentData, (value: any, key: string) => {
                 if (typeof value !== "object") {
                     return;
                 }
 
                 // check if object is in seenObjects
-                let foundKey = _.findKey(seenObjectsDict, (object: any) => {
+                const foundKey = _.findKey(seenObjectsDict, (object: any) => {
                     return object === value;
                 });
 
                 if (foundKey) {
                     currentData[key] = foundKey;
                 } else {
-                    let thisPath = `${path.join(specialChar)}${specialChar}${key}`;
+                    const thisPath = `${path.join(specialChar)}${specialChar}${key}`;
 
                     // not found - add it
                     seenObjectsDict[thisPath] = value;
 
                     // save previous path
-                    let pathBefore = _.clone(path);
+                    const pathBefore = _.clone(path);
                     path.push(key);
                     currentData[key] = replaceRecursive(value);
                     // revert path
@@ -135,7 +147,7 @@ export const CircularJSON = {
     },
     // replaces and stringifies
     stringify: (creatorOptions: CircularJSONStringifyOptions) => {
-        let options = _.defaults(creatorOptions || {}, {
+        const options = _.defaults(creatorOptions || {}, {
             space: CircularJSON._default.space,
         });
         return JSON.stringify(CircularJSON.replace(options.value), options.replacer, options.space);

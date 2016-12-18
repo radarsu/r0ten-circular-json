@@ -4,6 +4,12 @@ exports.CircularJSON = {
     _config: {
         leaveRefIfUndefined: true,
         specialChar: "~",
+        omitKeys: (key) => {
+            if (key.slice(0, 2) === "__") {
+                return true;
+            }
+            return false;
+        },
     },
     _default: {
         space: 0,
@@ -12,20 +18,24 @@ exports.CircularJSON = {
         _.assign(exports.CircularJSON._config, options);
     },
     parse: (creatorOptions) => {
-        let options = _.defaults(creatorOptions || {}, {
+        const options = _.defaults(creatorOptions || {}, {
             leaveRefIfUndefined: exports.CircularJSON._config.leaveRefIfUndefined,
             specialChar: exports.CircularJSON._config.specialChar,
         });
         return exports.CircularJSON.regenerate(JSON.parse(options.value), options.root);
     },
     regenerate: (data, root = data) => {
-        let specialChar = exports.CircularJSON._config.specialChar;
-        let leaveRefIfUndefined = exports.CircularJSON._config.leaveRefIfUndefined;
-        let seenObjects = [];
-        let referRecursive = (currentData) => {
+        const specialChar = exports.CircularJSON._config.specialChar;
+        const leaveRefIfUndefined = exports.CircularJSON._config.leaveRefIfUndefined;
+        const omitKeys = exports.CircularJSON._config.omitKeys;
+        const seenObjects = [];
+        const referRecursive = (currentData) => {
             _.forOwn(currentData, (value, key) => {
+                if (omitKeys(key)) {
+                    return;
+                }
                 if (typeof value === "object") {
-                    let found = _.find(seenObjects, (object) => {
+                    const found = _.find(seenObjects, (object) => {
                         return object === value;
                     });
                     if (found) {
@@ -37,7 +47,7 @@ exports.CircularJSON = {
                 if (typeof value !== "string" || value.charAt(0) !== specialChar) {
                     return;
                 }
-                let path = value.split(specialChar);
+                const path = value.split(specialChar);
                 path.shift();
                 if (path[0] === "") {
                     currentData[key] = root;
@@ -54,26 +64,26 @@ exports.CircularJSON = {
     },
     replace: (data) => {
         data = _.cloneDeep(data);
-        let specialChar = exports.CircularJSON._config.specialChar;
-        let seenObjectsDict = {
+        const specialChar = exports.CircularJSON._config.specialChar;
+        const seenObjectsDict = {
             [specialChar]: data,
         };
         let path = [""];
-        let replaceRecursive = (currentData) => {
+        const replaceRecursive = (currentData) => {
             _.forOwn(currentData, (value, key) => {
                 if (typeof value !== "object") {
                     return;
                 }
-                let foundKey = _.findKey(seenObjectsDict, (object) => {
+                const foundKey = _.findKey(seenObjectsDict, (object) => {
                     return object === value;
                 });
                 if (foundKey) {
                     currentData[key] = foundKey;
                 }
                 else {
-                    let thisPath = `${path.join(specialChar)}${specialChar}${key}`;
+                    const thisPath = `${path.join(specialChar)}${specialChar}${key}`;
                     seenObjectsDict[thisPath] = value;
-                    let pathBefore = _.clone(path);
+                    const pathBefore = _.clone(path);
                     path.push(key);
                     currentData[key] = replaceRecursive(value);
                     path = pathBefore;
@@ -84,7 +94,7 @@ exports.CircularJSON = {
         return replaceRecursive(data);
     },
     stringify: (creatorOptions) => {
-        let options = _.defaults(creatorOptions || {}, {
+        const options = _.defaults(creatorOptions || {}, {
             space: exports.CircularJSON._default.space,
         });
         return JSON.stringify(exports.CircularJSON.replace(options.value), options.replacer, options.space);

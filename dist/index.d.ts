@@ -16,6 +16,7 @@ export declare const CircularJSON: {
     _config: {
         leaveRefIfUndefined: boolean;
         specialChar: string;
+        omitKeys: (key: string) => boolean;
     };
     _default: {
         space: number;
