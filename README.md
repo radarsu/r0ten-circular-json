@@ -33,7 +33,7 @@ console.log(dict.items[1].room.name);
 ```
 
 Another example:
-```
+```ts
 let game: any = {
     name: "shard",
     rooms: [],
