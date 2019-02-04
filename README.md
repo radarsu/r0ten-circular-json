@@ -7,7 +7,7 @@ In my tests it appeared around 3x faster than <https://github.com/WebReflection/
 
 Also, there is available root customisation, which is very useful for sending circular objects from server to client-side, so that client can rebuild his circular references based on provided data. An example below:
 
-```
+```ts
 // let's say u have such object on client side
 let dict = {
   items: {},
